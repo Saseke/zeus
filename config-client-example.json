@@ -1,0 +1,10 @@
+{
+  "server": "127.0.0.1",
+  "port_password": {
+    "9000": "889900"
+  },
+  "method": "aes-256-cfb",
+  "obfs": "origin",
+  "local_address": "127.0.0.1",
+  "local_port": 10080
+}
