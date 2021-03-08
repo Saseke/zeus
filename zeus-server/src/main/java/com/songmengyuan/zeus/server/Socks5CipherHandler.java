@@ -18,6 +18,7 @@ public class Socks5CipherHandler extends MessageToMessageDecoder<ByteBuf> {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
+		System.out.println("对数据进行了解密");
 		AbstractCipher cipher = ctx.channel().attr(Socks5ServerConstant.SERVER_CIPHER).get();
 		if (cipher == null) {
 			ctx.close();

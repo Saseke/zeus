@@ -33,6 +33,7 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
 		logger.info("client channel id[{}]: receive info from client {} bytes", clientChannel.id(),
 				msg.readableBytes());
 
+		System.out.println("对数据进行了编码");
 		remoteChannel.writeAndFlush(getCryptMessage(msg.retain()));
 	}
 
