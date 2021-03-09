@@ -1,1 +1,71 @@
 # zeus
+
+A implementation of Shadowsocks in Java base on netty4 framework.
+
+## Features
+
+proxy tcp data streams
+
+## Development
+
+* IDE: IDEA
+* Java Version: JDK1.8
+* Maven :3.6.3
+
+## Build & Run
+
+Run `mvn clean install` in the root directory. If you want to run server node:
+
+```
+java -jar zeus-server/target/zeus-server-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+You can use `-c file` to specify a json file from your disk. There is a example config.json file.
+
+```
+{
+  "server": "0.0.0.0",
+  "port_password": {
+    "9000": "889900"
+  },
+  "method": "aes-256-cfb",
+  "obfs": "origin"
+}
+```
+
+If you want to run client node:
+
+```
+java -jar zeus-client/target/zeus-client-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+You can use `-c file` to specify a json file from your disk. There is a example config.json file.
+
+```
+{
+  "server": "127.0.0.1",
+  "port_password": {
+    "9000": "889900"
+  },
+  "method": "aes-256-cfb",
+  "obfs": "origin",
+  "local_address": "127.0.0.1",
+  "local_port": 10080
+}
+```
+
+## Supported Ciphers
+
+### AEAD Ciphers
+
+* `Aes-128-cfb`
+* `Aes-192-cfb`
+* `Aes-256-cfb`
+* `Chacha20`
+
+## TODO
+
+- [ ] Support UDP proxy 
+
+
+

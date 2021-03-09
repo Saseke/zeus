@@ -7,9 +7,6 @@ import java.security.SecureRandom;
 
 /**
  * 解密/加密工具
- *
- * @author zk
- * @since 2018/8/11
  */
 public abstract class AbstractCipher {
     /**

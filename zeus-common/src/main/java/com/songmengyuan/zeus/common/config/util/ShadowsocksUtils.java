@@ -12,9 +12,6 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * description
- *
- * @author zk
- * @since 2018/8/11
  */
 public class ShadowsocksUtils {
     /**
