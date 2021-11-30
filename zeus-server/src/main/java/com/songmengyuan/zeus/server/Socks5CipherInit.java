@@ -6,10 +6,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Socks5CipherInit extends ChannelInboundHandlerAdapter {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(Socks5CipherInit.class);
+    private static final Logger logger = LoggerFactory.getLogger(Socks5CipherInit.class);
 
     private final String method;
 

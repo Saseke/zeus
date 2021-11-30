@@ -1,22 +1,24 @@
 package com.songmengyuan.zeus.server;
 
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.songmengyuan.zeus.common.config.util.ShadowsocksUtils;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.ReferenceCountUtil;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(Socks5MessageHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(Socks5MessageHandler.class);
 
     private Channel clientChannel;
 
@@ -39,32 +41,30 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
             bootstrap = new Bootstrap();
             InetSocketAddress remoteAddress = ctx.channel().attr(Socks5ServerConstant.DST_ADDRESS).get();
             bootstrap.group(ctx.channel().eventLoop()).channel(NioSocketChannel.class)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel ch) {
-                            ch.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-                                @Override
-                                protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+                .option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel ch) {
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
 
-                                    clientChannel.writeAndFlush(msg.retain());
-                                }
+                                clientChannel.writeAndFlush(msg.retain());
+                            }
 
-                                @Override
-                                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-                                    logger.error("channel id:[{}] ,cause {}", ctx.channel().id(), cause.getMessage());
-                                    closeClientChannel();
-                                    closeRemoteChannel();
-                                }
-                            });
-                        }
-                    });
-            bootstrap.connect(remoteAddress).addListener((ChannelFutureListener) future -> {
+                            @Override
+                            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+                                logger.error("channel id:[{}] ,cause {}", ctx.channel().id(), cause.getMessage());
+                                closeClientChannel();
+                                closeRemoteChannel();
+                            }
+                        });
+                    }
+                });
+            bootstrap.connect(remoteAddress).addListener((ChannelFutureListener)future -> {
                 if (future.isSuccess()) {
                     remoteChannel = future.channel();
-                    logger.info("host: [{}:{}] connect success, client channelId is [{}],  remote channelId is [{}]",
-                            remoteAddress.getHostName(), remoteAddress.getPort(), clientChannel.id(),
-                            remoteChannel.id());
+                    logger.info("server : {} connect success, client channelId is {}",
+                        remoteAddress.getHostName() + ":" + remoteAddress.getPort(), clientChannel.id());
                     clientBuf.add(msg.retain());
                     writeAndFlushMessage();
                 } else {

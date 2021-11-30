@@ -1,0 +1,4 @@
+{
+  "kafka_server": "node01",
+  "topic_name": "zeus"
+}

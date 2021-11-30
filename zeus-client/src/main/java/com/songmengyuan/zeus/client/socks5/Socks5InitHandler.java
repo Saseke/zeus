@@ -1,6 +1,12 @@
 package com.songmengyuan.zeus.client.socks5;
 
+import java.net.InetSocketAddress;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.songmengyuan.zeus.common.config.SocksState;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -8,14 +14,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socksx.v5.*;
 import io.netty.util.ReferenceCountUtil;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-
-import java.net.InetSocketAddress;
 
 public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
 
-    private final InternalLogger logger = InternalLoggerFactory.getInstance(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(Socks5InitHandler.class);
 
     private SocksState state;
 
@@ -66,15 +68,17 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
                 break;
             case CONNECT:
                 if (msg instanceof DefaultSocks5CommandRequest) {
-                    DefaultSocks5CommandRequest commandRequest = (DefaultSocks5CommandRequest) msg;
-                    InetSocketAddress dstAddress = new InetSocketAddress(commandRequest.dstAddr(),
-                            commandRequest.dstPort());
+                    DefaultSocks5CommandRequest commandRequest = (DefaultSocks5CommandRequest)msg;
+                    InetSocketAddress dstAddress =
+                        new InetSocketAddress(commandRequest.dstAddr(), commandRequest.dstPort());
                     ctx.channel().attr(Socks5Constant.DST_ADDRESS).setIfAbsent(dstAddress);
                     connectRemote();
                     this.state = SocksState.FINISHED;
                 } else {
-                    ctx.channel().writeAndFlush(new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, Socks5AddressType.IPv4))
-                            .addListener(ChannelFutureListener.CLOSE);
+                    ctx.channel()
+                        .writeAndFlush(
+                            new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, Socks5AddressType.IPv4))
+                        .addListener(ChannelFutureListener.CLOSE);
                     logger.error("{} is not a commanderRequest", ctx.channel().id());
                 }
                 ReferenceCountUtil.release(msg);
@@ -89,31 +93,30 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
         if (remoteBootstrap == null) {
             remoteBootstrap = new Bootstrap();
             remoteBootstrap.group(new NioEventLoopGroup()).channel(NioSocketChannel.class)
-                    .option(ChannelOption.SO_KEEPALIVE, true)
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .handler(new ChannelInitializer<Channel>() {
-                        @Override
-                        protected void initChannel(Channel ch) {
-                            ch.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
-                                @Override
-                                protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
-                                    if (clientChannel.pipeline().get(Socks5DecipherHandler.class) == null) {
-                                        clientChannel.pipeline().addFirst(new Socks5DecipherHandler());
-                                    }
-                                    clientChannel.writeAndFlush(msg.retain());
+                .option(ChannelOption.SO_KEEPALIVE, true).option(ChannelOption.TCP_NODELAY, true)
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel ch) {
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+                                if (clientChannel.pipeline().get(Socks5DecipherHandler.class) == null) {
+                                    clientChannel.pipeline().addFirst(new Socks5DecipherHandler());
                                 }
-                            });
-                        }
-                    });
-            remoteBootstrap.connect(proxyAddress).addListener((ChannelFutureListener) future -> {
+                                clientChannel.writeAndFlush(msg.retain());
+                            }
+                        });
+                    }
+                });
+            remoteBootstrap.connect(proxyAddress).addListener((ChannelFutureListener)future -> {
                 if (future.isSuccess()) {
                     this.remoteChannel = future.channel();
                     this.clientChannel.attr(Socks5Constant.REMOTE_CHANNEL).setIfAbsent(this.remoteChannel);
                     clientChannel.writeAndFlush(
-                            new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4));
+                        new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4));
                     clientChannel.pipeline().addLast(new Socks5MessageHandler());
-                    logger.info("host: [{}:{}] connect success, client channelId is [{}],  remote channelId is [{}]",
-                            proxyAddress.getAddress(), proxyAddress.getPort(), clientChannel.id(), remoteChannel.id());
+                    logger.info("host: {} connect success, client channelId is {}, ",
+                        proxyAddress.getAddress() + ":" + proxyAddress.getPort(), clientChannel.id());
                 } else {
                     logger.error("channelId: {}, cause : {}", future.channel().id(), future.cause().getMessage());
                     closeChannel();

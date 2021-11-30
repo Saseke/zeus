@@ -1,23 +1,22 @@
 package com.songmengyuan.zeus.client;
 
 import com.songmengyuan.zeus.client.socks5.Socks5CipherInit;
-import com.songmengyuan.zeus.client.socks5.Socks5DecipherHandler;
 import com.songmengyuan.zeus.client.socks5.Socks5InitHandler;
-import com.songmengyuan.zeus.common.config.Config;
-import com.songmengyuan.zeus.common.config.ConfigLoader;
+import com.songmengyuan.zeus.common.config.config.Config;
+import com.songmengyuan.zeus.common.config.config.ConfigLoader;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
 
 public class ZeusClientBootStrap {
 
-    private static final InternalLogger logger = InternalLoggerFactory.getInstance(ZeusClientBootStrap.class);
+    private static final Logger logger = LoggerFactory.getLogger(ZeusClientBootStrap.class);
 
     private static final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 

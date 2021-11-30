@@ -17,5 +17,7 @@ public class Socks5Constant {
 
     public static AttributeKey<AbstractCipher> CLIENT_CIPHER = AttributeKey.valueOf("clientCipher");
 
-    public static String confPath = Objects.requireNonNull(Socks5Constant.class.getClassLoader().getResource("config.json")).getFile();
+    //    public static String confPath = Objects.requireNonNull(Socks5Constant.class.getClassLoader().getResource("config.json")).getFile();
+    public static String confPath = "config.json";
+
 }

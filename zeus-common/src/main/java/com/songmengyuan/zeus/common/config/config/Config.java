@@ -1,4 +1,4 @@
-package com.songmengyuan.zeus.common.config;
+package com.songmengyuan.zeus.common.config.config;
 
 import com.google.gson.annotations.SerializedName;
 

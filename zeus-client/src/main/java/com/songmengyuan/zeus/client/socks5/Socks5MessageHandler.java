@@ -1,21 +1,24 @@
 package com.songmengyuan.zeus.client.socks5;
 
+import java.net.InetSocketAddress;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.songmengyuan.zeus.common.config.cipher.AbstractCipher;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AsciiString;
 import io.netty.util.ReferenceCountUtil;
-import io.netty.util.internal.logging.InternalLogger;
-import io.netty.util.internal.logging.InternalLoggerFactory;
 import sun.net.util.IPAddressUtil;
-
-import java.net.InetSocketAddress;
 
 public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-	private final InternalLogger logger = InternalLoggerFactory.getInstance(getClass());
+	private static final Logger logger = LoggerFactory.getLogger(Socks5MessageHandler.class);
+
 
 	private Channel clientChannel;
 
