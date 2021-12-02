@@ -1,9 +1,9 @@
-package com.songmengyuan.zeus.log.analysis;
+package com.songmengyuan.zeus.log.analysis.server.boot;
 
 import com.songmengyuan.zeus.log.analysis.constant.LogAnalysisConstant;
 
 public class ZeusLogAnalysisApplication {
     public static void main(String[] args) throws Exception {
-        ZeusLogAnalysisBootstrap.getInstance().start(LogAnalysisConstant.configPath);
+        ZeusLogAnalysisBootstrap.start(LogAnalysisConstant.configPath,args);
     }
 }

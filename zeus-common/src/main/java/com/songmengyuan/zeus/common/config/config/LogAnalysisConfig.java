@@ -7,6 +7,9 @@ import lombok.Data;
 public class LogAnalysisConfig {
     @SerializedName("kafka_server")
     private String kafkaServer;
+
+    @SerializedName("kafka_port")
+    private String kafkaPort;
     @SerializedName("topic_name")
     private String topicName;
 }

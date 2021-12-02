@@ -1,0 +1,4 @@
+worker-id: afe8bdff-bcf1-4a77-bcd6-9340ee1cc1ad
+logs.users: []
+logs.groups: []
+topology.submitter.user: yoke

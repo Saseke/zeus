@@ -2,11 +2,14 @@ package com.songmengyuan.zeus.server;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.songmengyuan.zeus.common.config.model.ZeusLog;
+import com.songmengyuan.zeus.common.config.util.GsonUtil;
 import com.songmengyuan.zeus.common.config.util.ShadowsocksUtils;
 
 import io.netty.bootstrap.Bootstrap;
@@ -40,6 +43,7 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
         if (bootstrap == null) {
             bootstrap = new Bootstrap();
             InetSocketAddress remoteAddress = ctx.channel().attr(Socks5ServerConstant.DST_ADDRESS).get();
+            InetSocketAddress clientAddress = (InetSocketAddress)ctx.channel().remoteAddress();
             bootstrap.group(ctx.channel().eventLoop()).channel(NioSocketChannel.class)
                 .option(ChannelOption.TCP_NODELAY, true).handler(new ChannelInitializer<Channel>() {
                     @Override
@@ -47,13 +51,16 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
                         ch.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
                             @Override
                             protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-
                                 clientChannel.writeAndFlush(msg.retain());
                             }
 
                             @Override
                             public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-                                logger.error("channel id:[{}] ,cause {}", ctx.channel().id(), cause.getMessage());
+                                String message = String.format("[%s] channel id:[%s] ,cause %s",
+                                    Thread.currentThread().getName(), ctx.channel().id(), cause.getMessage());
+                                ZeusLog zeusLog = ZeusLog.createErrorLog(message, new Date());
+                                logger.info(GsonUtil.getGson().toJson(zeusLog));
+                                // logger.error("channel id:[{}] ,cause {}", ctx.channel().id(), cause.getMessage());
                                 closeClientChannel();
                                 closeRemoteChannel();
                             }
@@ -63,12 +70,24 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
             bootstrap.connect(remoteAddress).addListener((ChannelFutureListener)future -> {
                 if (future.isSuccess()) {
                     remoteChannel = future.channel();
-                    logger.info("server : {} connect success, client channelId is {}",
+                    // logger.info("server : {} connect success, client channelId is {}",
+                    // remoteAddress.getHostName() + ":" + remoteAddress.getPort(), clientChannel.id());
+                    String logMessage = String.format("server : %s connect success, client channelId is %s",
                         remoteAddress.getHostName() + ":" + remoteAddress.getPort(), clientChannel.id());
+                    ZeusLog log = ZeusLog.createRecordLog(new Date(), clientAddress.getAddress().getHostAddress(),
+                        String.valueOf(clientAddress.getPort()), clientAddress.getHostName(),
+                        ctx.channel().id().toString(), remoteAddress.getAddress().getHostAddress(),
+                        String.valueOf(remoteAddress.getPort()), remoteAddress.getHostName(), logMessage);
+                    logger.info(GsonUtil.getGson().toJson(log));
+                    logger.info(remoteAddress.toString());
                     clientBuf.add(msg.retain());
                     writeAndFlushMessage();
                 } else {
-                    logger.error(remoteAddress.getHostName() + ":" + remoteAddress.getPort() + " connection fail");
+                    String errLog = String.format("[%s] %s : %d connection fail", Thread.currentThread().getName(),
+                        remoteAddress.getHostName(), remoteAddress.getPort());
+                    ZeusLog zeusLog = ZeusLog.createErrorLog(errLog, new Date());
+                    logger.error(GsonUtil.getGson().toJson(zeusLog));
+                    // logger.error(remoteAddress.getHostName() + ":" + remoteAddress.getPort() + " connection fail");
                     closeClientChannel();
                 }
             });
@@ -79,12 +98,19 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     private void closeRemoteChannel() {
         remoteChannel.close();
-        logger.info("remote channel [{}] is closed", remoteChannel.id());
+        String errLog =
+            String.format("[%s] remote channel %s is closed]", Thread.currentThread().getName(), remoteChannel.id());
+        ZeusLog zeusLog = ZeusLog.createSystemLog(errLog, new Date());
+        logger.error(GsonUtil.getGson().toJson(zeusLog));
     }
 
     private void closeClientChannel() {
         clientChannel.close();
-        logger.info("client channel [{}] is closed", clientChannel.id());
+        String errLog =
+            String.format("[%s] client channel %s is closed]", Thread.currentThread().getName(), clientChannel.id());
+        ZeusLog zeusLog = ZeusLog.createSystemLog(errLog, new Date());
+        logger.error(GsonUtil.getGson().toJson(zeusLog));
+        // logger.info("client channel [{}] is closed", clientChannel.id());
     }
 
     private void writeAndFlushMessage() {

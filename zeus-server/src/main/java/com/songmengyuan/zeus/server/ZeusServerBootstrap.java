@@ -1,5 +1,6 @@
 package com.songmengyuan.zeus.server;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.songmengyuan.zeus.common.config.config.Config;
 import com.songmengyuan.zeus.common.config.config.ConfigLoader;
+import com.songmengyuan.zeus.common.config.model.ZeusLog;
+import com.songmengyuan.zeus.common.config.util.GsonUtil;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -32,7 +35,10 @@ public class ZeusServerBootstrap {
 
     public void start(String configPath) throws Exception {
         final Config config = ConfigLoader.load(configPath);
-        logger.info("load {} config file success", configPath);
+        String message =
+            String.format("[%s] load %s config file success.", Thread.currentThread().getName(), configPath);
+        ZeusLog log = ZeusLog.createSystemLog(message, new Date());
+        logger.info(GsonUtil.getGson().toJson(log));
         for (Map.Entry<Integer, String> portPassword : config.getPortPassword().entrySet()) {
             start0(config.getServer(), portPassword.getKey(), portPassword.getValue(), config.getMethod());
         }
@@ -51,8 +57,10 @@ public class ZeusServerBootstrap {
                 }
             });
         ChannelFuture future = serverBootstrap.bind(socks5ServerPort).sync();
-        logger.info("zeus server [TCP] running at {}", socks5ServerPort);
+        String message =
+            String.format("[%s] zeus server [TCP] running at %d", Thread.currentThread().getName(), socks5ServerPort);
+        ZeusLog log = ZeusLog.createSystemLog(message, new Date());
+        logger.info(GsonUtil.getGson().toJson(log));
         future.channel().closeFuture().sync();
     }
-
 }

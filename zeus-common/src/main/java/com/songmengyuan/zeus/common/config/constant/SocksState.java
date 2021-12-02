@@ -1,4 +1,4 @@
-package com.songmengyuan.zeus.common.config;
+package com.songmengyuan.zeus.common.config.constant;
 
 public enum SocksState {
 

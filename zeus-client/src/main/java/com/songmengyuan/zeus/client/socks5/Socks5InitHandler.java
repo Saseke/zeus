@@ -1,11 +1,14 @@
 package com.songmengyuan.zeus.client.socks5;
 
 import java.net.InetSocketAddress;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.songmengyuan.zeus.common.config.SocksState;
+import com.songmengyuan.zeus.common.config.constant.SocksState;
+import com.songmengyuan.zeus.common.config.model.ZeusLog;
+import com.songmengyuan.zeus.common.config.util.GsonUtil;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -56,13 +59,15 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
                     ctx.channel().writeAndFlush(response);
                     ctx.pipeline().addBefore(ctx.name(), "socks5-command", new Socks5CommandRequestDecoder());
                     this.state = SocksState.CONNECT;
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("{} init success", ctx.channel().id());
-                    }
                 } else {
                     response = new DefaultSocks5InitialResponse(Socks5AuthMethod.UNACCEPTED);
                     ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-                    logger.error("{} init is not socks5InitRequest", ctx.channel().id());
+
+                    String message = String.format("[%s] %s init is not socks5InitRequest",
+                        Thread.currentThread().getName(), ctx.channel().id());
+                    ZeusLog log = ZeusLog.createErrorLog(message, new Date());
+                    logger.info(GsonUtil.getGson().toJson(log));
+                    // logger.error("{} init is not socks5InitRequest", ctx.channel().id());
                 }
                 ReferenceCountUtil.release(msg);
                 break;
@@ -79,7 +84,11 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
                         .writeAndFlush(
                             new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, Socks5AddressType.IPv4))
                         .addListener(ChannelFutureListener.CLOSE);
-                    logger.error("{} is not a commanderRequest", ctx.channel().id());
+                    // logger.error("{} is not a commanderRequest", ctx.channel().id());
+                    String message = String.format("[%s] %s is not a commanderRequest",
+                        Thread.currentThread().getName(), ctx.channel().id());
+                    ZeusLog log = ZeusLog.createErrorLog(message, new Date());
+                    logger.info(GsonUtil.getGson().toJson(log));
                 }
                 ReferenceCountUtil.release(msg);
                 break;
@@ -115,10 +124,19 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
                     clientChannel.writeAndFlush(
                         new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4));
                     clientChannel.pipeline().addLast(new Socks5MessageHandler());
-                    logger.info("host: {} connect success, client channelId is {}, ",
-                        proxyAddress.getAddress() + ":" + proxyAddress.getPort(), clientChannel.id());
+                    // logger.info("host: {} connect success, client channelId is {}, ",
+                    // proxyAddress.getAddress() + ":" + proxyAddress.getPort(), clientChannel.id());
+                    String message = String.format("[%s] host: %s connect success, client channelId is %s, ",
+                        Thread.currentThread().getName(), proxyAddress.getAddress() + ":" + proxyAddress.getPort(),
+                        clientChannel.id());
+                    ZeusLog log = ZeusLog.createSystemLog(message, new Date());
+                    logger.info(GsonUtil.getGson().toJson(log));
                 } else {
-                    logger.error("channelId: {}, cause : {}", future.channel().id(), future.cause().getMessage());
+                    // logger.error("channelId: {}, cause : {}", future.channel().id(), future.cause().getMessage());
+                    String message = String.format("[%s] channelId: %s, cause : %s", Thread.currentThread().getName(),
+                        future.channel().id(), future.cause().getMessage());
+                    ZeusLog log = ZeusLog.createErrorLog(message, new Date());
+                    logger.error(GsonUtil.getGson().toJson(log));
                     closeChannel();
                 }
             });

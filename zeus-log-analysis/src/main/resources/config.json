@@ -1,4 +1,5 @@
 {
   "kafka_server": "node01",
+  "kafka_port": "9092",
   "topic_name": "zeus"
 }
