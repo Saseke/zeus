@@ -16,8 +16,9 @@ public class Socks5Constant {
     public static AttributeKey<InetSocketAddress> DST_ADDRESS = AttributeKey.valueOf("dstAddress");
 
     public static AttributeKey<AbstractCipher> CLIENT_CIPHER = AttributeKey.valueOf("clientCipher");
-
-    //    public static String confPath = Objects.requireNonNull(Socks5Constant.class.getClassLoader().getResource("config.json")).getFile();
+    public static AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
+    // public static String confPath =
+    // Objects.requireNonNull(Socks5Constant.class.getClassLoader().getResource("config.json")).getFile();
     public static String confPath = "config.json";
 
 }

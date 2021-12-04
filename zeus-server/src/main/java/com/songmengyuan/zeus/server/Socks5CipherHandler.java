@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +11,7 @@ import com.songmengyuan.zeus.common.config.cipher.AbstractCipher;
 import com.songmengyuan.zeus.common.config.model.ZeusLog;
 import com.songmengyuan.zeus.common.config.util.GsonUtil;
 import com.songmengyuan.zeus.common.config.util.ShadowsocksUtils;
+import com.songmengyuan.zeus.common.config.util.TokenUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -49,14 +49,18 @@ public class Socks5CipherHandler extends MessageToMessageDecoder<ByteBuf> {
                 return;
             }
             ctx.channel().attr(Socks5ServerConstant.DST_ADDRESS).set(inetSocketAddress);
+            String token = TokenUtil.getToken(msg);
+            ctx.channel().attr(Socks5ServerConstant.USER_TOKEN).setIfAbsent(token);
             // logger.info("client ip is {}. request server {}", clientAddress.getAddress(),
             // inetSocketAddress.getAddress() + ":" + inetSocketAddress.getPort());
             String logMessage = String.format("[%s] receive message from client", Thread.currentThread().getName());
             log = ZeusLog.createRecordLog(new Date(), clientAddress.getAddress().getHostAddress(),
                 String.valueOf(clientAddress.getPort()), clientAddress.getHostName(), ctx.channel().id().toString(),
                 inetSocketAddress.getAddress().getHostAddress(), String.valueOf(inetSocketAddress.getPort()),
-                inetSocketAddress.getHostName(), logMessage);
+                inetSocketAddress.getHostName(), logMessage, token);
             logger.info(GsonUtil.getGson().toJson(log));
+            // 计算流量
+            ZeusLog.recordTrafficLog(clientAddress, inetSocketAddress, token, bytes.length);
         }
         out.add(msg.retain());
     }
@@ -64,7 +68,8 @@ public class Socks5CipherHandler extends MessageToMessageDecoder<ByteBuf> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();
-        String message = String.format("[%s] a serious error occurred", Thread.currentThread().getName());
+        String message = String.format("[%s] a serious error occurred,error info :%s", Thread.currentThread().getName(),
+            cause.getMessage());
         ZeusLog log = ZeusLog.createErrorLog(message, new Date());
         logger.error(GsonUtil.getGson().toJson(log));
     }

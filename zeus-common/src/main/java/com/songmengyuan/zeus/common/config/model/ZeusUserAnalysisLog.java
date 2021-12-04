@@ -1,12 +1,18 @@
 package com.songmengyuan.zeus.common.config.model;
 
-import lombok.Data;
+import java.util.Date;
 
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ZeusUserAnalysisLog {
     private String id;
+    private String userId;
     private String userIpAddress;
-    private Set<String> histories;
+    private String url;
+    private Date date;
 }

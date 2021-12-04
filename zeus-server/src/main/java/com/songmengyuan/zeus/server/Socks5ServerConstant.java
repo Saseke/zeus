@@ -11,8 +11,10 @@ public class Socks5ServerConstant {
     public static AttributeKey<AbstractCipher> SERVER_CIPHER = AttributeKey.valueOf("serverCipher");
 
     public static AttributeKey<InetSocketAddress> DST_ADDRESS = AttributeKey.valueOf("dstAddress");
+    public static AttributeKey<String> USER_TOKEN = AttributeKey.valueOf("token");
     // 开发时用的path
-//    public static String confPath = Objects.requireNonNull(Socks5ServerConstant.class.getClassLoader().getResource("config.json")).getPath();
+    // public static String confPath =
+    // Objects.requireNonNull(Socks5ServerConstant.class.getClassLoader().getResource("config.json")).getPath();
     public static String confPath = "config.json";
 
 }

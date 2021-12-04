@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.Map;
 
+import com.songmengyuan.zeus.client.socks5.Socks5Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +47,19 @@ public class ZeusClientBootStrap {
         // logger.info("load {} config file success", configPath);
         for (Map.Entry<Integer, String> portPassword : config.getPortPassword().entrySet()) {
             start0(config.getServer(), portPassword.getKey(), portPassword.getValue(), config.getLocalAddress(),
-                config.getLocalPort(), config.getMethod());
+                config.getLocalPort(), config.getMethod(), config.getToken());
         }
     }
 
     private static void start0(String socks5ServerAddress, Integer socks5ServerPort, String socks5Password,
-        String socks5localAddress, Integer socks5LocalPort, String cipherMethod) throws InterruptedException {
+        String socks5localAddress, Integer socks5LocalPort, String cipherMethod, String token)
+        throws InterruptedException {
         clientBootstrap.group(bossGroup, workerGroup).childOption(ChannelOption.SO_KEEPALIVE, true)
             .childOption(ChannelOption.TCP_NODELAY, true).channel(NioServerSocketChannel.class)
             .childHandler(new ChannelInitializer<Channel>() {
                 @Override
                 protected void initChannel(Channel ch) {
+                    ch.attr(Socks5Constant.TOKEN).set(token);
                     ch.pipeline().addLast(new Socks5CipherInit(cipherMethod, socks5Password))
                         .addLast(new Socks5InitHandler(new InetSocketAddress(socks5ServerAddress, socks5ServerPort)));
                 }

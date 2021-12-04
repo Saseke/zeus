@@ -2,6 +2,14 @@
 
 A implementation of Shadowsocks in Java base on netty4 framework.
 
+# Modules
+
+There are three modules.
+
+* `zeus-server`: proxy server application
+* `zeus-client`: proxy client application
+* `zeus-log-analysis` proxy log analysis application.Flume was used to listen on Zeus' log files and send data to Kafka and log analysis by Storm
+
 ## Features
 
 proxy tcp data streams
@@ -66,6 +74,3 @@ You can use `-c file` to specify a json file from your disk. There is a example 
 ## TODO
 
 - [ ] Support UDP proxy 
-
-
-

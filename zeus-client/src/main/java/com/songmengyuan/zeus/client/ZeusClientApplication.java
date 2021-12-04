@@ -5,6 +5,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.songmengyuan.zeus.client.socks5.Socks5Constant;
 
+import java.util.UUID;
+
 public class ZeusClientApplication {
 
     @Parameter(names = {"-c"}, help = true, description = "Specifies the location of the configuration file")
@@ -12,9 +14,7 @@ public class ZeusClientApplication {
 
     public static void main(String[] args) throws Exception {
         ZeusClientApplication application = new ZeusClientApplication();
-        JCommander jct = JCommander.newBuilder()
-                .addObject(application)
-                .build();
+        JCommander jct = JCommander.newBuilder().addObject(application).build();
         jct.setProgramName("zeus");
         try {
             jct.parse(args);

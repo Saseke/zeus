@@ -23,8 +23,8 @@ public class ZeusFilterBolt extends BaseBasicBolt {
         if (!rawMessage.isEmpty()) {
             try {
                 ZeusLog zeusLog = GsonUtil.getGson().fromJson(rawMessage, ZeusLog.class);
-                if (zeusLog.getLevel().equals(ZeusLogLevel.RECORD)) {
-                    collector.emit(new Values(zeusLog.getId(), zeusLog));
+                if (zeusLog.getLevel().equals(ZeusLogLevel.RECORD) || zeusLog.getLevel().equals(ZeusLogLevel.TRAFFIC)) {
+                    collector.emit(new Values(zeusLog.getLevel(), zeusLog));
                 } else {
                     log.debug("the filtered data : {}", zeusLog);
                 }
@@ -36,6 +36,6 @@ public class ZeusFilterBolt extends BaseBasicBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("index", "record"));
+        declarer.declare(new Fields("level", "record"));
     }
 }

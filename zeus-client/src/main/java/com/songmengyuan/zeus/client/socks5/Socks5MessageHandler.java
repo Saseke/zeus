@@ -1,6 +1,7 @@
 package com.songmengyuan.zeus.client.socks5;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import com.songmengyuan.zeus.common.config.model.ZeusLog;
@@ -72,6 +73,10 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
                     msg.writeBytes(asciiHost);
                     msg.writeShort(queryAddress.getPort());
                 }
+                String token = clientChannel.attr(Socks5Constant.TOKEN).get();
+                byte[] rawToken = token.getBytes(StandardCharsets.UTF_8);
+                msg.writeInt(rawToken.length);
+                msg.writeBytes(rawToken);
             }
 
             byte[] payload = new byte[message.readableBytes()];

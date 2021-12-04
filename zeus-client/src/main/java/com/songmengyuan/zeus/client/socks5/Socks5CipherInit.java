@@ -36,6 +36,7 @@ public class Socks5CipherInit extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        logger.info("token is :[{}]", ctx.channel().attr(Socks5Constant.TOKEN).get());
         if (ctx.channel().attr(Socks5Constant.CLIENT_CIPHER).get() == null) {
             loadCipher(ctx);
             ctx.pipeline().remove(this);

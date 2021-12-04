@@ -1,5 +1,6 @@
 package com.songmengyuan.zeus.log.analysis.server.boot;
 
+import com.songmengyuan.zeus.log.analysis.server.bolt.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -9,11 +10,10 @@ import org.apache.storm.kafka.spout.KafkaSpoutConfig;
 import org.apache.storm.kafka.spout.KafkaSpoutRetryExponentialBackoff;
 import org.apache.storm.kafka.spout.KafkaSpoutRetryService;
 import org.apache.storm.topology.TopologyBuilder;
+import org.apache.storm.tuple.Fields;
 
 import com.songmengyuan.zeus.common.config.config.LogAnalysisConfig;
 import com.songmengyuan.zeus.common.config.config.LogAnalysisConfigLoader;
-import com.songmengyuan.zeus.log.analysis.server.bolt.ZeusCollectorBolt;
-import com.songmengyuan.zeus.log.analysis.server.bolt.ZeusFilterBolt;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,8 +27,13 @@ public class ZeusLogAnalysisBootstrap {
         final TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka_spout", new KafkaSpout<>(
             getKafkaSpoutConfig(config.getKafkaServer() + ":" + config.getKafkaPort(), config.getTopicName())), 1);
-        builder.setBolt("zeus_filter_bolt", new ZeusFilterBolt(), 10).shuffleGrouping("kafka_spout");
-        builder.setBolt("zeus_collector_bolt", new ZeusCollectorBolt(), 10).shuffleGrouping("zeus_filter_bolt");
+        builder.setBolt("zeus_filter_bolt", new ZeusFilterBolt()).shuffleGrouping("kafka_spout");
+        builder.setBolt("zeus_user_bolt", new ZeusUserBolt()).shuffleGrouping("zeus_filter_bolt");
+        builder.setBolt("zeus_traffic_bolt", new ZeusTrafficBolt()).shuffleGrouping("zeus_filter_bolt");
+        builder.setBolt("zeus_collector_bolt", new ZeusCollectorBolt()).fieldsGrouping("zeus_user_bolt",
+            new Fields("token"));
+        builder.setBolt("zeus_traffic_connector_bolt", new ZeusTrafficCollector()).fieldsGrouping("zeus_traffic_bolt",
+            new Fields("token"));
         // 如果外部传参 cluster 则代表线上环境启动,否则代表本地启动
         if (args.length > 0 && args[0].equals("cluster")) {
             StormSubmitter.submitTopology("ClusterReadingFromKafkaApp", new Config(), builder.createTopology());

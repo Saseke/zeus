@@ -1,86 +1,33 @@
 package com.songmengyuan.zeus.common.config.config;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
 import java.util.Map;
 
+@Data
 public class Config {
 
-	@SerializedName("server")
-	private String server;
+    @SerializedName("server")
+    private String server;
 
-	@SerializedName("port_password")
-	private Map<Integer, String> portPassword;
+    @SerializedName("port_password")
+    private Map<Integer, String> portPassword;
 
-	@SerializedName("method")
-	private String method;
+    @SerializedName("method")
+    private String method;
 
-	@SerializedName("obfs")
-	private String obfs;
+    @SerializedName("obfs")
+    private String obfs;
 
-	@SerializedName("obfsparam")
-	private String obfsParam;
+    @SerializedName("obfsparam")
+    private String obfsParam;
+    @SerializedName("token")
+    private String token;
+    @SerializedName("local_address")
+    private String localAddress;
 
-	@SerializedName("local_address")
-	private String localAddress;
-
-	@SerializedName("local_port")
-	private Integer localPort;
-
-	public String getServer() {
-		return server;
-	}
-
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	public Map<Integer, String> getPortPassword() {
-		return portPassword;
-	}
-
-	public void setPortPassword(Map<Integer, String> portPassword) {
-		this.portPassword = portPassword;
-	}
-
-	public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
-	}
-
-	public String getObfs() {
-		return obfs;
-	}
-
-	public void setObfs(String obfs) {
-		this.obfs = obfs;
-	}
-
-	public String getObfsParam() {
-		return obfsParam;
-	}
-
-	public void setObfsParam(String obfsParam) {
-		this.obfsParam = obfsParam;
-	}
-
-	public String getLocalAddress() {
-		return localAddress;
-	}
-
-	public void setLocalAddress(String localAddress) {
-		this.localAddress = localAddress;
-	}
-
-	public Integer getLocalPort() {
-		return localPort;
-	}
-
-	public void setLocalPort(Integer localPort) {
-		this.localPort = localPort;
-	}
+    @SerializedName("local_port")
+    private Integer localPort;
 
 }
