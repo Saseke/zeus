@@ -10,6 +10,13 @@ public class LogAnalysisConfig {
 
     @SerializedName("kafka_port")
     private String kafkaPort;
+    @SerializedName("zookeeper_server")
+    private String zookeeperServer;
+    @SerializedName("zookeeper_port")
+    private String zookeeperPort;
     @SerializedName("topic_name")
     private String topicName;
+
+    @SerializedName("calculate_method")
+    private String calculateMethod;
 }

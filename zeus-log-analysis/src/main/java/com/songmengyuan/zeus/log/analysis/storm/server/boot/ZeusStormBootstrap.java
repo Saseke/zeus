@@ -1,6 +1,5 @@
-package com.songmengyuan.zeus.log.analysis.server.boot;
+package com.songmengyuan.zeus.log.analysis.storm.server.boot;
 
-import com.songmengyuan.zeus.log.analysis.server.bolt.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -13,17 +12,15 @@ import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 
 import com.songmengyuan.zeus.common.config.config.LogAnalysisConfig;
-import com.songmengyuan.zeus.common.config.config.LogAnalysisConfigLoader;
+import com.songmengyuan.zeus.log.analysis.storm.server.bolt.*;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ZeusLogAnalysisBootstrap {
+public class ZeusStormBootstrap {
 
-    public static void start(String configPath, String[] args) throws Exception {
-        final LogAnalysisConfig config = LogAnalysisConfigLoader.load(configPath);
-        log.info("load {} config file success", configPath);
-        log.info("the config file information :{}", config);
+    public static void start(LogAnalysisConfig config, String[] args) throws Exception {
+//        final LogAnalysisConfig config = LogAnalysisConfigLoader.load(configPath);
         final TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("kafka_spout", new KafkaSpout<>(
             getKafkaSpoutConfig(config.getKafkaServer() + ":" + config.getKafkaPort(), config.getTopicName())), 1);

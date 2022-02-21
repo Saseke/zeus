@@ -1,4 +1,4 @@
-package com.songmengyuan.zeus.log.analysis.server.bolt;
+package com.songmengyuan.zeus.log.analysis.storm.server.bolt;
 
 import org.apache.storm.topology.BasicOutputCollector;
 import org.apache.storm.topology.OutputFieldsDeclarer;
