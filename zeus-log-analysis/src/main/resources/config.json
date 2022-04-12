@@ -1,7 +1,7 @@
 {
-  "kafka_server": "node01",
+  "kafka_server": "localhost",
   "kafka_port": "9092",
-  "zookeeper_server": "node01",
+  "zookeeper_server": "localhost",
   "zookeeper_port": "2181",
   "topic_name": "zeus",
   "calculate_method": "flink"

@@ -1,5 +1,6 @@
 package com.songmengyuan.zeus.common.config.model;
 
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import java.util.UUID;
 import com.songmengyuan.zeus.common.config.constant.ZeusLogLevel;
 import com.songmengyuan.zeus.common.config.util.GsonUtil;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Data
 @NoArgsConstructor
-public class ZeusLog {
+@AllArgsConstructor
+public class ZeusLog implements Serializable {
     private String id;
     private ZeusLogLevel level;
     private Date time;
@@ -92,5 +95,12 @@ public class ZeusLog {
             destAddress.getAddress().getHostAddress(), String.valueOf(destAddress.getPort()), destAddress.getHostName(),
             trafficMsg, token, traffic);
         log.info(GsonUtil.getGson().toJson(trafficLog));
+    }
+
+    public ZeusLog(String id, ZeusLogLevel level, Date time, String message) {
+        this.id = id;
+        this.level = level;
+        this.time = time;
+        this.message = message;
     }
 }

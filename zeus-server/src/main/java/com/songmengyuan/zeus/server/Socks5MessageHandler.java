@@ -81,7 +81,6 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
                         ctx.channel().id().toString(), remoteAddress.getAddress().getHostAddress(),
                         String.valueOf(remoteAddress.getPort()), remoteAddress.getHostName(), logMessage, "hello");
                     logger.info(GsonUtil.getGson().toJson(log));
-                    logger.info(remoteAddress.toString());
                     clientBuf.add(msg.retain());
                     writeAndFlushMessage(clientAddress, remoteAddress, token);
                 } else {

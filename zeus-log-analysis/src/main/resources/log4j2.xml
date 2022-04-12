@@ -17,7 +17,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <logger name="com.songmengyuan" level="INFO" additivity="false">
+        <logger name="com.songmengyuan" level="DEBUG" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="file"/>
         </logger>

@@ -9,8 +9,8 @@ public class TrafficUtil {
     /**
      * 计算流量数据的大小，返回合适的数据
      */
-    public static String calculateTraffic(long traffic) {
-        long bak = traffic;
+    public static String calculateTraffic(double traffic) {
+        double bak = traffic;
         if (traffic < BYTE_UNIT_MAX) {
             return traffic + " byte";
         } else if (traffic < KB_UNIT_MAX) {

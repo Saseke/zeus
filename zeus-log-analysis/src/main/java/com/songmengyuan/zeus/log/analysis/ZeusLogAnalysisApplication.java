@@ -7,6 +7,8 @@ import com.songmengyuan.zeus.log.analysis.flink.boot.ZeusFlinkBootstrap;
 import com.songmengyuan.zeus.log.analysis.storm.server.boot.ZeusStormBootstrap;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Properties;
+
 @Slf4j
 public class ZeusLogAnalysisApplication {
     public static void main(String[] args) throws Exception {
