@@ -1,7 +1,7 @@
 {
   "server": "0.0.0.0",
   "port_password": {
-    "9000": "889900"
+    "9001": "889900"
   },
   "method": "aes-256-cfb",
   "obfs": "origin"

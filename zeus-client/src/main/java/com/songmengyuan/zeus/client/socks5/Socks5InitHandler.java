@@ -67,7 +67,6 @@ public class Socks5InitHandler extends ChannelInboundHandlerAdapter {
                         Thread.currentThread().getName(), ctx.channel().id());
                     ZeusLog log = ZeusLog.createErrorLog(message, new Date());
                     logger.info(GsonUtil.getGson().toJson(log));
-                    // logger.error("{} init is not socks5InitRequest", ctx.channel().id());
                 }
                 ReferenceCountUtil.release(msg);
                 break;

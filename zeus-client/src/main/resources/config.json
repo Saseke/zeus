@@ -1,7 +1,7 @@
 {
   "server": "127.0.0.1",
   "port_password": {
-    "9000": "889900"
+    "9001": "889900"
   },
   "token": "9cf2541f-5327-4f2a-81c1-dc757e87afc4",
   "method": "aes-256-cfb",

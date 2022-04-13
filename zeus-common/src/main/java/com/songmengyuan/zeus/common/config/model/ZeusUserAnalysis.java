@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ZeusUserAnalysis {
     private String userId;
+    private String userIpAddress;
     private Long windowEnd;
     private String destHostIp;
     private Long count;

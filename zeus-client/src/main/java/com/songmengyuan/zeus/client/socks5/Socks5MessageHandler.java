@@ -73,6 +73,7 @@ public class Socks5MessageHandler extends SimpleChannelInboundHandler<ByteBuf> {
                     msg.writeBytes(asciiHost);
                     msg.writeShort(queryAddress.getPort());
                 }
+                // put token写入byte stream.
                 String token = clientChannel.attr(Socks5Constant.TOKEN).get();
                 byte[] rawToken = token.getBytes(StandardCharsets.UTF_8);
                 msg.writeInt(rawToken.length);

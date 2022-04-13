@@ -44,7 +44,6 @@ public class ZeusClientBootStrap {
             String.format("[%s] load %s config file success", Thread.currentThread().getName(), configPath);
         ZeusLog log = ZeusLog.createSystemLog(message, new Date());
         logger.info(GsonUtil.getGson().toJson(log));
-        // logger.info("load {} config file success", configPath);
         for (Map.Entry<Integer, String> portPassword : config.getPortPassword().entrySet()) {
             start0(config.getServer(), portPassword.getKey(), portPassword.getValue(), config.getLocalAddress(),
                 config.getLocalPort(), config.getMethod(), config.getToken());
